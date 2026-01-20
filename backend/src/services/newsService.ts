@@ -8,13 +8,16 @@ import {
 
 class NewsService {
 	private readonly baseUrl = 'https://newsapi.org/v2';
-	private readonly apiKey: string;
 
-	constructor() {
-		this.apiKey = process.env.NEWS_API_KEY || '';
-		if (!this.apiKey) {
-			throw new Error('NEWS_API_KEY is not defined in environment variables');
+	// We use a getter to retrieve the key only when needed
+	private get apiKey(): string {
+		const key = process.env.NEWS_API_KEY;
+		if (!key) {
+			throw new Error(
+				'NEWS_API_KEY is not defined in environment variables. Check your .env file.',
+			);
 		}
+		return key;
 	}
 
 	/**
@@ -32,13 +35,12 @@ class NewsService {
 						category,
 						page,
 						pageSize,
-						apiKey: this.apiKey,
+						apiKey: this.apiKey, // This calls the getter above
 					},
 					timeout: 10000,
 				},
 			);
 
-			// Add category to each article if category was specified
 			if (category && response.data.articles) {
 				response.data.articles = response.data.articles.map((article) => ({
 					...article,
@@ -57,33 +59,22 @@ class NewsService {
 		}
 	}
 
-	/**
-	 * Get list of available countries
-	 */
 	getCountries() {
 		return COUNTRIES;
 	}
-
-	/**
-	 * Get list of available categories
-	 */
 	getCategories() {
 		return CATEGORIES;
 	}
 
-	/**
-	 * Validate country code
-	 */
 	isValidCountry(countryCode: string): boolean {
 		return COUNTRIES.some((country) => country.code === countryCode);
 	}
 
-	/**
-	 * Validate category
-	 */
 	isValidCategory(categoryId: string): boolean {
 		return CATEGORIES.some((category) => category.id === categoryId);
 	}
 }
 
-export default new NewsService();
+// Export the class itself or a singleton instance
+export const newsService = new NewsService();
+export default newsService;
