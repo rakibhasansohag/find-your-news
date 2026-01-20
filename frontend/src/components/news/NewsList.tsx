@@ -42,12 +42,14 @@ export function NewsList({ articles, loading, error }: NewsListProps) {
 			<div className='flex flex-col items-center justify-center py-12 px-4 text-center'>
 				<AlertCircle className='w-12 h-12 text-muted-foreground mb-4' />
 				<h3 className='text-lg font-semibold mb-2'>No articles found</h3>
-				<p className='text-muted-foreground max-w-md'>
+				<p className='text-muted-foreground max-w-md mb-2'>
 					Try selecting a different country or category.
 				</p>
-				<p className='text-muted-foreground max-w-md'>
+				<p className='text-foreground max-w-md'>
 					As of this is A Free Api Endpoint some of the News of some country are
-					not available try selecting the US as a country
+					not available try selecting the
+					<span className='text-destructive mx-2 '>US</span>
+					as a country
 				</p>
 			</div>
 		);

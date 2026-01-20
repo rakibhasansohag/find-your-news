@@ -21,11 +21,17 @@ export interface NewsApiResponse {
 	articles: NewsArticle[];
 }
 
+// Extended params with all filters
 export interface TopHeadlinesParams {
 	country?: string;
 	category?: string;
 	page?: number;
 	pageSize?: number;
+	from?: string; 
+	to?: string; 
+	language?: string; 
+	sources?: string; 
+	q?: string; 
 }
 
 export interface ApiResponse<T> {
@@ -45,6 +51,51 @@ export interface Category {
 	id: string;
 	name: string;
 	color: string;
+}
+
+export interface Language {
+	code: string;
+	name: string;
+}
+
+export interface NewsSourceOption {
+	id: string;
+	name: string;
+	country: string;
+	category: string;
+}
+
+// MongoDB Article Schema Interface
+export interface IArticle {
+	_id?: string;
+	source: NewsSource;
+	author: string | null;
+	title: string;
+	description: string | null;
+	url: string;
+	urlToImage: string | null;
+	publishedAt: Date;
+	content: string | null;
+	category?: string;
+	country?: string;
+	language?: string;
+	fetchedAt: Date;
+	createdAt?: Date;
+	updatedAt?: Date;
+}
+
+// Pagination Response
+export interface PaginatedResponse<T> {
+	success: boolean;
+	data: T[];
+	pagination: {
+		page: number;
+		pageSize: number;
+		totalResults: number;
+		totalPages: number;
+		hasNextPage: boolean;
+		hasPrevPage: boolean;
+	};
 }
 
 export const COUNTRIES: Country[] = [
@@ -112,4 +163,20 @@ export const CATEGORIES: Category[] = [
 	{ id: 'sports', name: 'Sports', color: 'bg-green-500' },
 	{ id: 'science', name: 'Science', color: 'bg-cyan-500' },
 	{ id: 'health', name: 'Health', color: 'bg-red-500' },
+];
+
+export const LANGUAGES: Language[] = [
+	{ code: 'ar', name: 'Arabic' },
+	{ code: 'de', name: 'German' },
+	{ code: 'en', name: 'English' },
+	{ code: 'es', name: 'Spanish' },
+	{ code: 'fr', name: 'French' },
+	{ code: 'he', name: 'Hebrew' },
+	{ code: 'it', name: 'Italian' },
+	{ code: 'nl', name: 'Dutch' },
+	{ code: 'no', name: 'Norwegian' },
+	{ code: 'pt', name: 'Portuguese' },
+	{ code: 'ru', name: 'Russian' },
+	{ code: 'sv', name: 'Swedish' },
+	{ code: 'zh', name: 'Chinese' },
 ];

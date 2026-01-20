@@ -3,18 +3,20 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+dotenv.config();
+
+import { connectDatabase } from './config/database';
 import { errorHandler } from './middleware/errorHandler';
 
 // Load environment variables
-dotenv.config();
+import newsRoutes from './routes/newsRoutes';
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
-console.log('port', PORT);
-console.log(process.env.NEWS_API_KEY);
+// connect to the mongodb
+connectDatabase();
 
-import newsRoutes from './routes/newsRoutes';
 // Middleware
 app.use(helmet()); // Security headers
 app.use(
@@ -29,7 +31,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health check route
 app.get('/health', (req, res) => {
-	res.json({ status: 'OK', timestamp: new Date().toISOString() });
+	res.json({
+		status: 'OK',
+		timestamp: new Date().toISOString(),
+		database: 'Connected',
+	});
 });
 
 // API Routes
