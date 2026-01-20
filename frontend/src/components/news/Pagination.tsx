@@ -27,6 +27,14 @@ export function Pagination({
 		const pages: (number | string)[] = [];
 		const maxPagesToShow = 5;
 
+		console.log({
+			currentPage,
+			totalPages,
+			onpagehide,
+			hasNextPage,
+			hasPrevPage,
+		});
+
 		if (totalPages <= maxPagesToShow) {
 			// Show all pages if total is less than max
 			for (let i = 1; i <= totalPages; i++) {

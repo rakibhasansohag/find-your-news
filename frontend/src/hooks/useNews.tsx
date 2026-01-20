@@ -29,10 +29,10 @@ export interface UseNewsReturn {
 		hasPrevPage: boolean;
 	};
 	refetch: () => void;
-	setPage: (page: number) => void;
 }
 
 export function useNews(params: UseNewsParams = {}): UseNewsReturn {
+	// 1. Destructure params with defaults
 	const {
 		country = 'us',
 		category,
@@ -50,18 +50,17 @@ export function useNews(params: UseNewsParams = {}): UseNewsReturn {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [totalResults, setTotalResults] = useState(0);
-	const [currentPage, setCurrentPage] = useState(page);
 	const [totalPages, setTotalPages] = useState(1);
 	const [hasNextPage, setHasNextPage] = useState(false);
 	const [hasPrevPage, setHasPrevPage] = useState(false);
 
+	// 2. Fetch logic using 'page' from params directly
 	const fetchNews = useCallback(async () => {
 		try {
 			setLoading(true);
 			setError(null);
 
 			if (dataSource === 'api') {
-				// Fetch from NewsAPI (also stores in DB)
 				const data = await newsApi.getTopHeadlines({
 					country,
 					category,
@@ -70,7 +69,7 @@ export function useNews(params: UseNewsParams = {}): UseNewsReturn {
 					to,
 					sources,
 					q: search,
-					page: currentPage,
+					page,
 					pageSize,
 				});
 
@@ -79,10 +78,9 @@ export function useNews(params: UseNewsParams = {}): UseNewsReturn {
 
 				const calculatedTotalPages = Math.ceil(data.totalResults / pageSize);
 				setTotalPages(calculatedTotalPages);
-				setHasNextPage(currentPage < calculatedTotalPages);
-				setHasPrevPage(currentPage > 1);
+				setHasNextPage(page < calculatedTotalPages);
+				setHasPrevPage(page > 1);
 			} else {
-				// Fetch from MongoDB
 				const response = await newsApi.getArticlesFromDB({
 					country,
 					category,
@@ -90,7 +88,7 @@ export function useNews(params: UseNewsParams = {}): UseNewsReturn {
 					from,
 					to,
 					search,
-					page: currentPage,
+					page,
 					pageSize,
 				});
 
@@ -118,18 +116,15 @@ export function useNews(params: UseNewsParams = {}): UseNewsReturn {
 		to,
 		sources,
 		search,
-		currentPage,
+		page,
 		pageSize,
 		dataSource,
 	]);
 
+	// 3. Trigger fetch when any parameter changes
 	useEffect(() => {
 		fetchNews();
 	}, [fetchNews]);
-
-	const setPage = useCallback((newPage: number) => {
-		setCurrentPage(newPage);
-	}, []);
 
 	return {
 		articles,
@@ -137,12 +132,11 @@ export function useNews(params: UseNewsParams = {}): UseNewsReturn {
 		error,
 		totalResults,
 		pagination: {
-			currentPage,
+			currentPage: page,
 			totalPages,
 			hasNextPage,
 			hasPrevPage,
 		},
 		refetch: fetchNews,
-		setPage,
 	};
 }

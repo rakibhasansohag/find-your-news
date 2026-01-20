@@ -36,8 +36,21 @@ export function AdvancedFilters({
 	const [languages, setLanguages] = useState<Language[]>([]);
 	const [sources, setSources] = useState<NewsSourceOption[]>([]);
 	const [isExpanded, setIsExpanded] = useState(false);
+	const [localSearch, setLocalSearch] = useState(filters.search || '');
 
 	console.log({ filters, onFiltersChange });
+
+	const handleFilterChange = (
+		key: keyof AdvancedFilterValues,
+		value: string | undefined,
+	) => {
+		const finalValue = value === 'all' ? undefined : value;
+
+		onFiltersChange({
+			...filters,
+			[key]: finalValue,
+		});
+	};
 
 	useEffect(() => {
 		const fetchMetadata = async () => {
@@ -56,17 +69,24 @@ export function AdvancedFilters({
 		fetchMetadata();
 	}, []);
 
-	const handleFilterChange = (
-		key: keyof AdvancedFilterValues,
-		value: string | undefined,
-	) => {
-		const finalValue = value === 'all' ? undefined : value;
+	useEffect(() => {
+		if (filters.search !== localSearch) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setLocalSearch(filters.search || '');
+		}
+	}, [filters.search]);
 
-		onFiltersChange({
-			...filters,
-			[key]: finalValue,
-		});
-	};
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			if (localSearch !== (filters.search || '')) {
+				handleFilterChange('search', localSearch || undefined); // Now this works!
+			}
+		}, 500);
+
+		return () => clearTimeout(timer);
+	}, [localSearch]);
+
+	
 
 	const clearFilters = () => {
 		onFiltersChange({});
