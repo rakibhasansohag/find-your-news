@@ -1,53 +1,83 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
+import {
+	NewsApiResponse,
+	Country,
+	Category,
+	ApiResponse,
+} from '@/types/news.types';
 
-const api = axios.create({
-	baseURL: process.env.NEXT_PUBLIC_API_URL,
-	withCredentials: true,
+const API_BASE_URL =
+	process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+const apiClient = axios.create({
+	baseURL: API_BASE_URL,
+	timeout: 15000,
 	headers: {
 		'Content-Type': 'application/json',
 	},
 });
 
 // Request interceptor
-api.interceptors.request.use(
+apiClient.interceptors.request.use(
 	(config) => {
-		const token = localStorage.getItem('token');
-		if (token) {
-			config.headers.Authorization = `Bearer ${token}`;
-		}
 		return config;
 	},
-	(error) => Promise.reject(error),
-);
-
-// Response interceptor
-api.interceptors.response.use(
-	(response) => response,
 	(error) => {
-		if (error.response?.status === 401) {
-			localStorage.removeItem('token');
-			window.location.href = '/login';
-		}
 		return Promise.reject(error);
 	},
 );
 
-// Auth APIs
-export const authAPI = {
-	register: (data: any) => api.post('/auth/register', data),
-	login: (data: any) => api.post('/auth/login', data),
-	logout: () => api.post('/auth/logout'),
-	getMe: () => api.get('/auth/me'),
+// Response interceptor
+apiClient.interceptors.response.use(
+	(response) => response,
+	(error) => {
+		console.error('API Error:', error.response?.data || error.message);
+		return Promise.reject(error);
+	},
+);
+
+export const newsApi = {
+	/**
+	 * Fetch top headlines
+	 */
+	getTopHeadlines: async (
+		country: string = 'us',
+		category?: string,
+		page: number = 1,
+	): Promise<NewsApiResponse> => {
+		const response = await apiClient.get<ApiResponse<NewsApiResponse>>(
+			'/news/top-headlines',
+			{
+				params: {
+					country,
+					category,
+					page,
+					pageSize: 20,
+				},
+			},
+		);
+		return response.data.data!;
+	},
+
+	/**
+	 * Get available countries
+	 */
+	getCountries: async (): Promise<Country[]> => {
+		const response = await apiClient.get<ApiResponse<Country[]>>(
+			'/news/countries',
+		);
+		return response.data.data!;
+	},
+
+	/**
+	 * Get available categories
+	 */
+	getCategories: async (): Promise<Category[]> => {
+		const response = await apiClient.get<ApiResponse<Category[]>>(
+			'/news/categories',
+		);
+		return response.data.data!;
+	},
 };
 
-// Task APIs
-export const taskAPI = {
-	getTasks: (params?: any) => api.get('/tasks', { params }),
-	getTask: (id: string) => api.get(`/tasks/${id}`),
-	createTask: (data: any) => api.post('/tasks', data),
-	updateTask: (id: string, data: any) => api.put(`/tasks/${id}`, data),
-	deleteTask: (id: string) => api.delete(`/tasks/${id}`),
-};
-
-export default api;
+export default apiClient;
