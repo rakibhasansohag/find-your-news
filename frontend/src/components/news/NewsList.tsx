@@ -45,6 +45,10 @@ export function NewsList({ articles, loading, error }: NewsListProps) {
 				<p className='text-muted-foreground max-w-md'>
 					Try selecting a different country or category.
 				</p>
+				<p className='text-muted-foreground max-w-md'>
+					As of this is A Free Api Endpoint some of the News of some country are
+					not available try selecting the US as a country
+				</p>
 			</div>
 		);
 	}

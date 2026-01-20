@@ -49,11 +49,11 @@ export function CountrySelector({
 	if (view === 'dropdown') {
 		return (
 			<Select value={selectedCountry} onValueChange={onCountryChange}>
-				<SelectTrigger className='w-[280px]'>
+				<SelectTrigger className='w-70 h-96'>
 					<Globe className='w-4 h-4 mr-2' />
 					<SelectValue placeholder='Select a country' />
 				</SelectTrigger>
-				<SelectContent>
+				<SelectContent className='h-96'>
 					{countries.map((country) => (
 						<SelectItem key={country.code} value={country.code}>
 							<span className='mr-2'>{country.flag}</span>

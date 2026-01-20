@@ -10,7 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Newspaper, RefreshCw } from 'lucide-react';
 
 export default function HomePage() {
-	const [selectedCountry, setSelectedCountry] = useState('us');
+	const [selectedCountry, setSelectedCountry] = useState('cn');
 	const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
 		undefined,
 	);
@@ -20,6 +20,8 @@ export default function HomePage() {
 		selectedCountry,
 		selectedCategory,
 	);
+
+	console.log({ articles });
 
 	return (
 		<div className='min-h-screen bg-background'>
@@ -82,7 +84,7 @@ export default function HomePage() {
 					</div>
 
 					{/* Results Count */}
-					{!loading && !error && (
+					{!loading && !error && totalResults && (
 						<div className='text-sm text-muted-foreground'>
 							Showing {articles.length} of {totalResults} articles
 						</div>

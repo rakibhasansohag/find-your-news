@@ -28,7 +28,7 @@ class NewsService {
 			const { country = 'us', category, page = 1, pageSize = 20 } = params;
 
 			const response = await axios.get<NewsApiResponse>(
-				`${this.baseUrl}/top-headlines`,
+				`${this.baseUrl}/top-headlines/`,
 				{
 					params: {
 						country,
@@ -40,6 +40,8 @@ class NewsService {
 					timeout: 10000,
 				},
 			);
+
+			console.log(response.data);
 
 			if (category && response.data.articles) {
 				response.data.articles = response.data.articles.map((article) => ({

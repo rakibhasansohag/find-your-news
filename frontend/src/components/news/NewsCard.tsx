@@ -25,7 +25,6 @@ export function NewsCard({ article }: NewsCardProps) {
 	const imageUrl = article.urlToImage || getPlaceholderImage();
 	const categoryColor = getCategoryColor(article.category);
 
-	console.log('article', article);
 
 	return (
 		<Card className='overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col pt-0 gap-3'>
