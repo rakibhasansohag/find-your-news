@@ -39,3 +39,46 @@ export interface ApiResponse<T> {
 	error?: string;
 	message?: string;
 }
+
+export interface Language {
+	code: string;
+	name: string;
+}
+
+export interface NewsSourceOption {
+	id: string;
+	name: string;
+	country: string;
+	category: string;
+}
+
+export interface IArticle {
+	_id?: string;
+	source: NewsSource;
+	author: string | null;
+	title: string;
+	description: string | null;
+	url: string;
+	urlToImage: string | null;
+	publishedAt: string;
+	content: string | null;
+	category?: string;
+	country?: string;
+	language?: string;
+	fetchedAt: string;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
+export interface PaginatedResponse<T> {
+	success: boolean;
+	data: T[];
+	pagination: {
+		page: number;
+		pageSize: number;
+		totalResults: number;
+		totalPages: number;
+		hasNextPage: boolean;
+		hasPrevPage: boolean;
+	};
+}

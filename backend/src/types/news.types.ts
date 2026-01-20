@@ -65,7 +65,7 @@ export interface NewsSourceOption {
 	category: string;
 }
 
-// MongoDB Article Schema Interface
+
 export interface IArticle {
 	_id?: string;
 	source: NewsSource;

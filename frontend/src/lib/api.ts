@@ -3,7 +3,11 @@ import {
 	NewsApiResponse,
 	Country,
 	Category,
+	Language,
 	ApiResponse,
+	PaginatedResponse,
+	IArticle,
+	NewsSourceOption,
 } from '@/types/news.types';
 
 const API_BASE_URL =
@@ -17,17 +21,6 @@ const apiClient = axios.create({
 	},
 });
 
-// Request interceptor
-apiClient.interceptors.request.use(
-	(config) => {
-		return config;
-	},
-	(error) => {
-		return Promise.reject(error);
-	},
-);
-
-// Response interceptor
 apiClient.interceptors.response.use(
 	(response) => response,
 	(error) => {
@@ -38,24 +31,71 @@ apiClient.interceptors.response.use(
 
 export const newsApi = {
 	/**
-	 * Fetch top headlines
+	 * Fetch top headlines from NewsAPI (stores in DB)
 	 */
-	getTopHeadlines: async (
-		country: string = 'us',
-		category?: string,
-		page: number = 1,
-	): Promise<NewsApiResponse> => {
+	getTopHeadlines: async (params: {
+		country?: string;
+		category?: string;
+		page?: number;
+		pageSize?: number;
+		from?: string;
+		to?: string;
+		language?: string;
+		sources?: string;
+		q?: string;
+	}): Promise<NewsApiResponse> => {
 		const response = await apiClient.get<ApiResponse<NewsApiResponse>>(
 			'/news/top-headlines',
 			{
 				params: {
-					country,
-					category,
-					page,
-					pageSize: 20,
+					country: params.country || 'us',
+					category: params.category,
+					page: params.page || 1,
+					pageSize: params.pageSize || 20,
+					from: params.from,
+					to: params.to,
+					language: params.language,
+					sources: params.sources,
+					q: params.q,
 				},
 			},
 		);
+		return response.data.data!;
+	},
+
+	/**
+	 * Get articles from MongoDB with filters
+	 */
+	getArticlesFromDB: async (params: {
+		country?: string;
+		category?: string;
+		language?: string;
+		from?: string;
+		to?: string;
+		page?: number;
+		pageSize?: number;
+		search?: string;
+	}): Promise<PaginatedResponse<IArticle>> => {
+		const response = await apiClient.get<PaginatedResponse<IArticle>>(
+			'/news/articles',
+			{
+				params,
+			},
+		);
+		return response.data;
+	},
+
+	/**
+	 * Get available sources
+	 */
+	getSources: async (params?: {
+		country?: string;
+		category?: string;
+		language?: string;
+	}): Promise<NewsSourceOption[]> => {
+		const response = await apiClient.get<ApiResponse<[]>>('/news/sources', {
+			params,
+		});
 		return response.data.data!;
 	},
 
@@ -75,6 +115,16 @@ export const newsApi = {
 	getCategories: async (): Promise<Category[]> => {
 		const response = await apiClient.get<ApiResponse<Category[]>>(
 			'/news/categories',
+		);
+		return response.data.data!;
+	},
+
+	/**
+	 * Get available languages
+	 */
+	getLanguages: async (): Promise<Language[]> => {
+		const response = await apiClient.get<ApiResponse<Language[]>>(
+			'/news/languages',
 		);
 		return response.data.data!;
 	},
