@@ -74,19 +74,17 @@ export function AdvancedFilters({
 			// eslint-disable-next-line react-hooks/set-state-in-effect
 			setLocalSearch(filters.search || '');
 		}
-	}, [filters.search]);
+	}, [filters.search, localSearch]);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			if (localSearch !== (filters.search || '')) {
-				handleFilterChange('search', localSearch || undefined); // Now this works!
+				handleFilterChange('search', localSearch || undefined);
 			}
 		}, 500);
 
 		return () => clearTimeout(timer);
 	}, [localSearch]);
-
-	
 
 	const clearFilters = () => {
 		onFiltersChange({});
@@ -151,7 +149,7 @@ export function AdvancedFilters({
 						</Select>
 					</div>
 
-					{/* Date From */}
+					{/* Date From Will Not Work As the API does not support it */}
 					<div className='space-y-2'>
 						<Label className='flex items-center gap-2'>
 							<Calendar className='w-4 h-4' />

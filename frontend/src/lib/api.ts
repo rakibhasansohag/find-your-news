@@ -63,6 +63,12 @@ export const newsApi = {
 		return response.data.data!;
 	},
 
+	// react reload cashing to stop it
+
+	// first start => live => top headlines => task => history
+
+	// system => live => top headlines => task => history
+
 	/**
 	 * Get articles from MongoDB with filters
 	 */

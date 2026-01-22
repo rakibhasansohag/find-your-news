@@ -1,4 +1,7 @@
 import axios from 'axios';
+
+import mongoose from 'mongoose';
+
 import {
 	NewsApiResponse,
 	TopHeadlinesParams,
@@ -7,6 +10,8 @@ import {
 	LANGUAGES,
 	PaginatedResponse,
 	IArticle,
+	NewsArticle,
+	ArticleQuery,
 } from '../types/news.types';
 import { Article } from '../models/Article';
 
@@ -39,7 +44,7 @@ class NewsService {
 			} = params;
 
 			// Build API params
-			const apiParams: any = {
+			const apiParams: Record<string | number, string | number> = {
 				page,
 				pageSize,
 				apiKey: this.apiKey,
@@ -85,7 +90,6 @@ class NewsService {
 
 			console.log(response.data);
 
-
 			return response.data;
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
@@ -101,7 +105,7 @@ class NewsService {
 	 * Store articles in MongoDB (upsert to avoid duplicates)
 	 */
 	private async storeArticles(
-		articles: any[],
+		articles: NewsArticle[],
 		metadata: { category?: string; country?: string; language?: string },
 	): Promise<void> {
 		try {
@@ -154,7 +158,7 @@ class NewsService {
 		} = params;
 
 		// Build query
-		const query: any = {};
+		const query: ArticleQuery = {};
 
 		if (country) query.country = country;
 		if (category) query.category = category;

@@ -30,7 +30,6 @@ export function Pagination({
 		console.log({
 			currentPage,
 			totalPages,
-			onpagehide,
 			hasNextPage,
 			hasPrevPage,
 		});

@@ -98,6 +98,20 @@ export interface PaginatedResponse<T> {
 	};
 }
 
+export type ArticleQuery = {
+	country?: string;
+	category?: string;
+	language?: string;
+	publishedAt?: {
+		$gte?: Date;
+		$lte?: Date;
+	};
+	$text?: {
+		$search: string;
+	};
+};
+
+
 export const COUNTRIES: Country[] = [
 	{ code: 'ae', name: 'United Arab Emirates', flag: '🇦🇪' },
 	{ code: 'ar', name: 'Argentina', flag: '🇦🇷' },
